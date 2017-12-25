@@ -1,0 +1,20 @@
+{
+  "Testkey":"test_value",
+  "Server": {
+    "SSHPort": "22222",
+    "SSHKeyPath":"./config/resources/",
+    "SSHKeyName":"sshtron.pem",
+    "HTTPPort": "8080",
+    "HTTPFileServerDir": "./static/"
+  },
+  "Game": {
+    "Server": {
+      "GameWidth": 78,
+      "GameHeight": 22
+    },
+    "Player": {
+      "VerticalSpeed": 0.007,
+      "HorizontalSpeed": 0.01
+    }
+  }
+}

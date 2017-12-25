@@ -1,0 +1,15 @@
+# gitignore for sshtron
+
+# system
+.DS_Store
+
+# ide
+.vscode
+.idea
+
+# bin
+bin/*
+
+# secrets
+*.pub
+*.pem
