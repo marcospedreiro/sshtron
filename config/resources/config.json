@@ -50,7 +50,9 @@
       "BottomRight": "╝",
       "BottomLeft": "╚",
       "Grass": " ",
-      "Blocker": "■"
+      "Blocker": "■",
+      "GameLoopsPerSecond": 100,
+      "RedrawsPerSecond": 50
     }
   }
 }

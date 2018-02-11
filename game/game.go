@@ -302,7 +302,7 @@ func (g *Game) Run() {
 	// run game loop
 	go func() {
 		var lastUpdate time.Time
-		c := time.Tick(time.Second / 60) //TODO: make this configurable
+		c := time.Tick(time.Second / time.Duration(config.GameLoopsPerSecond))
 		for now := range c {
 			g.Update(float64(now.Sub(lastUpdate)) / float64(time.Millisecond))
 			lastUpdate = now
@@ -312,7 +312,7 @@ func (g *Game) Run() {
 	// redraw
 	// potential optimization: use diffs to only redraw when needed
 	go func() {
-		c := time.Tick(time.Second / 10)
+		c := time.Tick(time.Second / time.Duration(config.RedrawsPerSecond))
 		for range c {
 			g.Redraw <- struct{}{}
 		}
@@ -393,6 +393,15 @@ func SetGameServerProperties(cfg *config.Config) {
 	}
 	if cfg.Game.Server.Blocker != nil {
 		config.Blocker, _ = utf8.DecodeRuneInString(*cfg.Game.Server.Blocker)
+	}
+	if cfg.Game.Server.Blocker != nil {
+		config.Blocker, _ = utf8.DecodeRuneInString(*cfg.Game.Server.Blocker)
+	}
+	if cfg.Game.Server.GameLoopsPerSecond != nil {
+		config.GameLoopsPerSecond = *cfg.Game.Server.GameLoopsPerSecond
+	}
+	if cfg.Game.Server.RedrawsPerSecond != nil {
+		config.RedrawsPerSecond = *cfg.Game.Server.RedrawsPerSecond
 	}
 	return
 }
