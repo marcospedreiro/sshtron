@@ -16,19 +16,6 @@ import (
 	"github.com/marcospedreiro/sshtron/session"
 )
 
-// Characters for rendering
-var (
-	VerticalWall   = '║'
-	HorizontalWall = '═'
-	TopLeft        = '╔'
-	TopRight       = '╗'
-	BottomRight    = '╝'
-	BottomLeft     = '╚'
-
-	Grass   = ' '
-	Blocker = '■'
-)
-
 // TileType an int used to describe what type of surface we are
 type TileType int
 
@@ -180,19 +167,19 @@ func (g *Game) worldString(s *session.Session) string {
 	// load walls into rune slice
 	borderColorizer := color.New(player.PlayerBorderColors[s.Player.Color]).SprintFunc()
 	for x := range strWorld {
-		strWorld[x][0] = borderColorizer(string(HorizontalWall))
-		strWorld[x][worldHeight+1] = borderColorizer(string(HorizontalWall))
+		strWorld[x][0] = borderColorizer(string(config.HorizontalWall))
+		strWorld[x][worldHeight+1] = borderColorizer(string(config.HorizontalWall))
 	}
 	for y := range strWorld[0] {
-		strWorld[0][y] = borderColorizer(string(VerticalWall))
-		strWorld[worldWidth+1][y] = borderColorizer(string(VerticalWall))
+		strWorld[0][y] = borderColorizer(string(config.VerticalWall))
+		strWorld[worldWidth+1][y] = borderColorizer(string(config.VerticalWall))
 	}
 
 	// colorize corners
-	strWorld[0][0] = borderColorizer(string(TopLeft))
-	strWorld[worldWidth+1][0] = borderColorizer(string(TopRight))
-	strWorld[0][worldHeight+1] = borderColorizer(string(BottomLeft))
-	strWorld[worldWidth+1][worldHeight+1] = borderColorizer(string(BottomRight))
+	strWorld[0][0] = borderColorizer(string(config.TopLeft))
+	strWorld[worldWidth+1][0] = borderColorizer(string(config.TopRight))
+	strWorld[0][worldHeight+1] = borderColorizer(string(config.BottomLeft))
+	strWorld[worldWidth+1][worldHeight+1] = borderColorizer(string(config.BottomRight))
 
 	// Draw the player's score
 	scoreStr := fmt.Sprintf(
@@ -267,9 +254,9 @@ func (g *Game) worldString(s *session.Session) string {
 
 			switch tile.Type {
 			case TileGrass:
-				strWorld[x+1][y+1] = string(Grass)
+				strWorld[x+1][y+1] = string(config.Grass)
 			case TileBlocker:
-				strWorld[x+1][y+1] = string(Blocker)
+				strWorld[x+1][y+1] = string(config.Blocker)
 			}
 		}
 	}
@@ -358,7 +345,7 @@ func (g *Game) Update(delta float64) {
 		}
 
 		// Kick the player if they've timed out
-		if time.Now().Sub(s.LastAction) > player.PlayerTimeout {
+		if time.Now().Sub(s.LastAction) > config.PlayerTimeout {
 			fmt.Fprint(s, "\r\n\r\nYou were terminated due to inactivity\r\n")
 			g.RemoveSession(s)
 			return
@@ -384,28 +371,28 @@ func (g *Game) Update(delta float64) {
 // TODO: There must be a better way to do this?
 func SetGameServerProperties(cfg *config.Config) {
 	if cfg.Game.Server.VerticalWall != nil {
-		VerticalWall, _ = utf8.DecodeRuneInString(*cfg.Game.Server.VerticalWall)
+		config.VerticalWall, _ = utf8.DecodeRuneInString(*cfg.Game.Server.VerticalWall)
 	}
 	if cfg.Game.Server.HorizontalWall != nil {
-		HorizontalWall, _ = utf8.DecodeRuneInString(*cfg.Game.Server.HorizontalWall)
+		config.HorizontalWall, _ = utf8.DecodeRuneInString(*cfg.Game.Server.HorizontalWall)
 	}
 	if cfg.Game.Server.TopLeft != nil {
-		TopLeft, _ = utf8.DecodeRuneInString(*cfg.Game.Server.TopLeft)
+		config.TopLeft, _ = utf8.DecodeRuneInString(*cfg.Game.Server.TopLeft)
 	}
 	if cfg.Game.Server.TopRight != nil {
-		TopRight, _ = utf8.DecodeRuneInString(*cfg.Game.Server.TopRight)
+		config.TopRight, _ = utf8.DecodeRuneInString(*cfg.Game.Server.TopRight)
 	}
 	if cfg.Game.Server.BottomRight != nil {
-		BottomRight, _ = utf8.DecodeRuneInString(*cfg.Game.Server.BottomRight)
+		config.BottomRight, _ = utf8.DecodeRuneInString(*cfg.Game.Server.BottomRight)
 	}
 	if cfg.Game.Server.BottomLeft != nil {
-		BottomLeft, _ = utf8.DecodeRuneInString(*cfg.Game.Server.BottomLeft)
+		config.BottomLeft, _ = utf8.DecodeRuneInString(*cfg.Game.Server.BottomLeft)
 	}
 	if cfg.Game.Server.Grass != nil {
-		Grass, _ = utf8.DecodeRuneInString(*cfg.Game.Server.Grass)
+		config.Grass, _ = utf8.DecodeRuneInString(*cfg.Game.Server.Grass)
 	}
 	if cfg.Game.Server.Blocker != nil {
-		Blocker, _ = utf8.DecodeRuneInString(*cfg.Game.Server.Blocker)
+		config.Blocker, _ = utf8.DecodeRuneInString(*cfg.Game.Server.Blocker)
 	}
 	return
 }

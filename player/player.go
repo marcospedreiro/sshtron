@@ -28,26 +28,6 @@ const (
 	PlayerRight PlayerDirection = 3
 )
 
-// default values if not provided in config file
-var (
-	VerticalPlayerSpeed        = 0.007
-	HorizontalPlayerSpeed      = 0.01
-	PlayerCountScoreMultiplier = 1.25
-	PlayerTimeout              = 15 * time.Second
-
-	PlayerUpRune    = '⇡'
-	PlayerDownRune  = '⇣'
-	PlayerLeftRune  = '⇠'
-	PlayerRightRune = '⇢'
-
-	PlayerTrailHorizontal      = '┄'
-	PlayerTrailVertical        = '┆'
-	PlayerTrailLeftCornerUp    = '╭'
-	PlayerTrailLeftCornerDown  = '╰'
-	PlayerTrailRightCornerDown = '╯'
-	PlayerTrailRightCornerUp   = '╮'
-)
-
 var PlayerColors = []color.Attribute{
 	PlayerRed, PlayerGreen, PlayerYellow, PlayerBlue,
 	PlayerMagenta, PlayerCyan, PlayerWhite,
@@ -107,7 +87,7 @@ func NewPlayer(worldWidth int, worldHeight int, color color.Attribute) *Player {
 
 	return &Player{
 		CreatedAt: time.Now(),
-		Marker:    PlayerDownRune,
+		Marker:    config.PlayerDownRune,
 		Direction: PlayerDown,
 		Color:     color,
 		Pos:       &position.Position{X: startX, Y: startY},
@@ -120,7 +100,7 @@ func (p *Player) addTrailSegment(pos position.Position, marker rune) {
 }
 
 func (p *Player) calculateScore(delta float64, playerCount int) float64 {
-	rawIncrement := (delta * (float64(playerCount-1) * PlayerCountScoreMultiplier))
+	rawIncrement := (delta * (float64(playerCount-1) * config.PlayerCountScoreMultiplier))
 
 	// Convert millisecond increment to seconds
 	actualIncrement := rawIncrement / 1000
@@ -148,13 +128,13 @@ func (p *Player) Update(numPlayers int, delta float64) {
 
 	switch p.Direction {
 	case PlayerUp:
-		p.Pos.Y -= VerticalPlayerSpeed * delta
+		p.Pos.Y -= config.VerticalPlayerSpeed * delta
 	case PlayerLeft:
-		p.Pos.X -= HorizontalPlayerSpeed * delta
+		p.Pos.X -= config.HorizontalPlayerSpeed * delta
 	case PlayerDown:
-		p.Pos.Y += VerticalPlayerSpeed * delta
+		p.Pos.Y += config.VerticalPlayerSpeed * delta
 	case PlayerRight:
-		p.Pos.X += HorizontalPlayerSpeed * delta
+		p.Pos.X += config.HorizontalPlayerSpeed * delta
 	}
 
 	endX, endY := p.Pos.RoundX(), p.Pos.RoundY()
@@ -177,29 +157,29 @@ func (p *Player) Update(numPlayers int, delta float64) {
 		case lastSeg != nil &&
 			(p.Direction == PlayerRight && endX > lastSegX && endY < lastSegY) ||
 			(p.Direction == PlayerDown && endX < lastSegX && endY > lastSegY):
-			p.addTrailSegment(pos, PlayerTrailLeftCornerUp)
+			p.addTrailSegment(pos, config.PlayerTrailLeftCornerUp)
 		case lastSeg != nil &&
 			(p.Direction == PlayerUp && endX > lastSegX && endY < lastSegY) ||
 			(p.Direction == PlayerLeft && endX < lastSegX && endY > lastSegY):
-			p.addTrailSegment(pos, PlayerTrailRightCornerDown)
+			p.addTrailSegment(pos, config.PlayerTrailRightCornerDown)
 		case lastSeg != nil &&
 			(p.Direction == PlayerDown && endX > lastSegX && endY > lastSegY) ||
 			(p.Direction == PlayerLeft && endX < lastSegX && endY < lastSegY):
-			p.addTrailSegment(pos, PlayerTrailRightCornerUp)
+			p.addTrailSegment(pos, config.PlayerTrailRightCornerUp)
 		case lastSeg != nil &&
 			(p.Direction == PlayerRight && endX > lastSegX && endY > lastSegY) ||
 			(p.Direction == PlayerUp && endX < lastSegX && endY < lastSegY):
-			p.addTrailSegment(pos, PlayerTrailLeftCornerDown)
+			p.addTrailSegment(pos, config.PlayerTrailLeftCornerDown)
 
 		// Vertical and horizontal trails
 		case endX == startX && endY < startY:
-			p.addTrailSegment(pos, PlayerTrailVertical)
+			p.addTrailSegment(pos, config.PlayerTrailVertical)
 		case endX < startX && endY == startY:
-			p.addTrailSegment(pos, PlayerTrailHorizontal)
+			p.addTrailSegment(pos, config.PlayerTrailHorizontal)
 		case endX == startX && endY > startY:
-			p.addTrailSegment(pos, PlayerTrailVertical)
+			p.addTrailSegment(pos, config.PlayerTrailVertical)
 		case endX > startX && endY == startY:
-			p.addTrailSegment(pos, PlayerTrailHorizontal)
+			p.addTrailSegment(pos, config.PlayerTrailHorizontal)
 		}
 	}
 
@@ -225,46 +205,46 @@ func (slice ByColor) Swap(i, j int) {
 // TODO: There must be a better way to do this?
 func SetPlayerProperties(cfg *config.Config) {
 	if cfg.Game.Player.VerticalSpeed != nil {
-		VerticalPlayerSpeed = *cfg.Game.Player.VerticalSpeed
+		config.VerticalPlayerSpeed = *cfg.Game.Player.VerticalSpeed
 	}
 	if cfg.Game.Player.HorizontalSpeed != nil {
-		HorizontalPlayerSpeed = *cfg.Game.Player.HorizontalSpeed
+		config.HorizontalPlayerSpeed = *cfg.Game.Player.HorizontalSpeed
 	}
 	if cfg.Game.Player.CountScoreMultiplier != nil {
-		PlayerCountScoreMultiplier = *cfg.Game.Player.CountScoreMultiplier
+		config.PlayerCountScoreMultiplier = *cfg.Game.Player.CountScoreMultiplier
 	}
 	if cfg.Game.Player.TimeoutSeconds != nil {
-		PlayerTimeout = time.Duration(*cfg.Game.Player.TimeoutSeconds) * time.Second
+		config.PlayerTimeout = time.Duration(*cfg.Game.Player.TimeoutSeconds) * time.Second
 	}
 	if cfg.Game.Player.UpRune != nil {
-		PlayerUpRune, _ = utf8.DecodeRuneInString(*cfg.Game.Player.UpRune)
+		config.PlayerUpRune, _ = utf8.DecodeRuneInString(*cfg.Game.Player.UpRune)
 	}
 	if cfg.Game.Player.DownRune != nil {
-		PlayerDownRune, _ = utf8.DecodeRuneInString(*cfg.Game.Player.DownRune)
+		config.PlayerDownRune, _ = utf8.DecodeRuneInString(*cfg.Game.Player.DownRune)
 	}
 	if cfg.Game.Player.LeftRune != nil {
-		PlayerLeftRune, _ = utf8.DecodeRuneInString(*cfg.Game.Player.LeftRune)
+		config.PlayerLeftRune, _ = utf8.DecodeRuneInString(*cfg.Game.Player.LeftRune)
 	}
 	if cfg.Game.Player.RightRune != nil {
-		PlayerRightRune, _ = utf8.DecodeRuneInString(*cfg.Game.Player.RightRune)
+		config.PlayerRightRune, _ = utf8.DecodeRuneInString(*cfg.Game.Player.RightRune)
 	}
 	if cfg.Game.Player.TrailHorizontal != nil {
-		PlayerTrailHorizontal, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailHorizontal)
+		config.PlayerTrailHorizontal, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailHorizontal)
 	}
 	if cfg.Game.Player.TrailVertical != nil {
-		PlayerTrailVertical, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailVertical)
+		config.PlayerTrailVertical, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailVertical)
 	}
 	if cfg.Game.Player.TrailLeftCornerUp != nil {
-		PlayerTrailLeftCornerUp, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailLeftCornerUp)
+		config.PlayerTrailLeftCornerUp, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailLeftCornerUp)
 	}
 	if cfg.Game.Player.TrailLeftCornerDown != nil {
-		PlayerTrailLeftCornerDown, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailLeftCornerDown)
+		config.PlayerTrailLeftCornerDown, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailLeftCornerDown)
 	}
 	if cfg.Game.Player.TrailRightCornerDown != nil {
-		PlayerTrailRightCornerDown, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailRightCornerDown)
+		config.PlayerTrailRightCornerDown, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailRightCornerDown)
 	}
 	if cfg.Game.Player.TrailRightCornerUp != nil {
-		PlayerTrailRightCornerUp, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailRightCornerUp)
+		config.PlayerTrailRightCornerUp, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailRightCornerUp)
 	}
 	return
 }

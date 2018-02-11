@@ -11,3 +11,16 @@ type GameServerConf struct {
 	Grass          *string
 	Blocker        *string
 }
+
+// Characters for rendering
+var (
+	VerticalWall   = '║'
+	HorizontalWall = '═'
+	TopLeft        = '╔'
+	TopRight       = '╗'
+	BottomRight    = '╝'
+	BottomLeft     = '╚'
+
+	Grass   = ' '
+	Blocker = '■'
+)

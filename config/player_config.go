@@ -1,5 +1,7 @@
 package config
 
+import "time"
+
 // PlayerConf is the config struct for player properties
 type PlayerConf struct {
 	VerticalSpeed        *float64
@@ -17,3 +19,23 @@ type PlayerConf struct {
 	TrailRightCornerDown *string
 	TrailRightCornerUp   *string
 }
+
+// default values if not provided in config file
+var (
+	VerticalPlayerSpeed        = 0.007
+	HorizontalPlayerSpeed      = 0.01
+	PlayerCountScoreMultiplier = 1.25
+	PlayerTimeout              = 15 * time.Second
+
+	PlayerUpRune    = '⇡'
+	PlayerDownRune  = '⇣'
+	PlayerLeftRune  = '⇠'
+	PlayerRightRune = '⇢'
+
+	PlayerTrailHorizontal      = '┄'
+	PlayerTrailVertical        = '┆'
+	PlayerTrailLeftCornerUp    = '╭'
+	PlayerTrailLeftCornerDown  = '╰'
+	PlayerTrailRightCornerDown = '╯'
+	PlayerTrailRightCornerUp   = '╮'
+)
