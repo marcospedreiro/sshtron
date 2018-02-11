@@ -6,16 +6,18 @@ import (
 	"io"
 	"sort"
 	"time"
+	"unicode/utf8"
 
 	"github.com/dustinkirkland/golang-petname"
 	"github.com/fatih/color"
+	"github.com/marcospedreiro/sshtron/config"
 	"github.com/marcospedreiro/sshtron/player"
 	"github.com/marcospedreiro/sshtron/position"
 	"github.com/marcospedreiro/sshtron/session"
 )
 
 // Characters for rendering
-const (
+var (
 	VerticalWall   = '║'
 	HorizontalWall = '═'
 	TopLeft        = '╔'
@@ -375,4 +377,35 @@ func (g *Game) Update(delta float64) {
 			s.StartOver(g.WorldWidth(), g.WorldHeight())
 		}
 	}
+}
+
+// SetGameServerProperties reads cfg.Game.Server.* and overrides the default player
+// properties with values in the configuration json if set
+// TODO: There must be a better way to do this?
+func SetGameServerProperties(cfg *config.Config) {
+	if cfg.Game.Server.VerticalWall != nil {
+		VerticalWall, _ = utf8.DecodeRuneInString(*cfg.Game.Server.VerticalWall)
+	}
+	if cfg.Game.Server.HorizontalWall != nil {
+		HorizontalWall, _ = utf8.DecodeRuneInString(*cfg.Game.Server.HorizontalWall)
+	}
+	if cfg.Game.Server.TopLeft != nil {
+		TopLeft, _ = utf8.DecodeRuneInString(*cfg.Game.Server.TopLeft)
+	}
+	if cfg.Game.Server.TopRight != nil {
+		TopRight, _ = utf8.DecodeRuneInString(*cfg.Game.Server.TopRight)
+	}
+	if cfg.Game.Server.BottomRight != nil {
+		BottomRight, _ = utf8.DecodeRuneInString(*cfg.Game.Server.BottomRight)
+	}
+	if cfg.Game.Server.BottomLeft != nil {
+		BottomLeft, _ = utf8.DecodeRuneInString(*cfg.Game.Server.BottomLeft)
+	}
+	if cfg.Game.Server.Grass != nil {
+		Grass, _ = utf8.DecodeRuneInString(*cfg.Game.Server.Grass)
+	}
+	if cfg.Game.Server.Blocker != nil {
+		Blocker, _ = utf8.DecodeRuneInString(*cfg.Game.Server.Blocker)
+	}
+	return
 }

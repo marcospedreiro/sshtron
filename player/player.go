@@ -3,8 +3,10 @@ package player
 import (
 	"math/rand"
 	"time"
+	"unicode/utf8"
 
 	"github.com/fatih/color"
+	"github.com/marcospedreiro/sshtron/config"
 	"github.com/marcospedreiro/sshtron/position"
 )
 
@@ -12,23 +14,6 @@ import (
 type PlayerDirection int
 
 const (
-	VerticalPlayerSpeed        = 0.007
-	HorizontalPlayerSpeed      = 0.01
-	PlayerCountScoreMultiplier = 1.25
-	PlayerTimeout              = 15 * time.Second
-
-	PlayerUpRune    = '⇡'
-	PlayerLeftRune  = '⇠'
-	PlayerDownRune  = '⇣'
-	PlayerRightRune = '⇢'
-
-	PlayerTrailHorizontal      = '┄'
-	PlayerTrailVertical        = '┆'
-	PlayerTrailLeftCornerUp    = '╭'
-	PlayerTrailLeftCornerDown  = '╰'
-	PlayerTrailRightCornerDown = '╯'
-	PlayerTrailRightCornerUp   = '╮'
-
 	PlayerRed     = color.FgRed
 	PlayerGreen   = color.FgGreen
 	PlayerYellow  = color.FgYellow
@@ -37,10 +22,30 @@ const (
 	PlayerCyan    = color.FgCyan
 	PlayerWhite   = color.FgWhite
 
-	PlayerUp PlayerDirection = iota
-	PlayerLeft
-	PlayerDown
-	PlayerRight
+	PlayerUp    PlayerDirection = 0
+	PlayerLeft  PlayerDirection = 1
+	PlayerDown  PlayerDirection = 2
+	PlayerRight PlayerDirection = 3
+)
+
+// default values if not provided in config file
+var (
+	VerticalPlayerSpeed        = 0.007
+	HorizontalPlayerSpeed      = 0.01
+	PlayerCountScoreMultiplier = 1.25
+	PlayerTimeout              = 15 * time.Second
+
+	PlayerUpRune    = '⇡'
+	PlayerDownRune  = '⇣'
+	PlayerLeftRune  = '⇠'
+	PlayerRightRune = '⇢'
+
+	PlayerTrailHorizontal      = '┄'
+	PlayerTrailVertical        = '┆'
+	PlayerTrailLeftCornerUp    = '╭'
+	PlayerTrailLeftCornerDown  = '╰'
+	PlayerTrailRightCornerDown = '╯'
+	PlayerTrailRightCornerUp   = '╮'
 )
 
 var PlayerColors = []color.Attribute{
@@ -213,4 +218,53 @@ func (slice ByColor) Less(i, j int) bool {
 
 func (slice ByColor) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
+}
+
+// SetPlayerProperties reads cfg.Game.Player.* and overrides the default player
+// properties with values in the configuration json if set
+// TODO: There must be a better way to do this?
+func SetPlayerProperties(cfg *config.Config) {
+	if cfg.Game.Player.VerticalSpeed != nil {
+		VerticalPlayerSpeed = *cfg.Game.Player.VerticalSpeed
+	}
+	if cfg.Game.Player.HorizontalSpeed != nil {
+		HorizontalPlayerSpeed = *cfg.Game.Player.HorizontalSpeed
+	}
+	if cfg.Game.Player.CountScoreMultiplier != nil {
+		PlayerCountScoreMultiplier = *cfg.Game.Player.CountScoreMultiplier
+	}
+	if cfg.Game.Player.TimeoutSeconds != nil {
+		PlayerTimeout = time.Duration(*cfg.Game.Player.TimeoutSeconds) * time.Second
+	}
+	if cfg.Game.Player.UpRune != nil {
+		PlayerUpRune, _ = utf8.DecodeRuneInString(*cfg.Game.Player.UpRune)
+	}
+	if cfg.Game.Player.DownRune != nil {
+		PlayerDownRune, _ = utf8.DecodeRuneInString(*cfg.Game.Player.DownRune)
+	}
+	if cfg.Game.Player.LeftRune != nil {
+		PlayerLeftRune, _ = utf8.DecodeRuneInString(*cfg.Game.Player.LeftRune)
+	}
+	if cfg.Game.Player.RightRune != nil {
+		PlayerRightRune, _ = utf8.DecodeRuneInString(*cfg.Game.Player.RightRune)
+	}
+	if cfg.Game.Player.TrailHorizontal != nil {
+		PlayerTrailHorizontal, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailHorizontal)
+	}
+	if cfg.Game.Player.TrailVertical != nil {
+		PlayerTrailVertical, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailVertical)
+	}
+	if cfg.Game.Player.TrailLeftCornerUp != nil {
+		PlayerTrailLeftCornerUp, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailLeftCornerUp)
+	}
+	if cfg.Game.Player.TrailLeftCornerDown != nil {
+		PlayerTrailLeftCornerDown, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailLeftCornerDown)
+	}
+	if cfg.Game.Player.TrailRightCornerDown != nil {
+		PlayerTrailRightCornerDown, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailRightCornerDown)
+	}
+	if cfg.Game.Player.TrailRightCornerUp != nil {
+		PlayerTrailRightCornerUp, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailRightCornerUp)
+	}
+	return
 }

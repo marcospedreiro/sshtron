@@ -4,13 +4,15 @@ import (
 	"bufio"
 	"fmt"
 	"strings"
+	"unicode/utf8"
 
+	"github.com/marcospedreiro/sshtron/config"
 	"github.com/marcospedreiro/sshtron/player"
 	"github.com/marcospedreiro/sshtron/session"
 	"golang.org/x/crypto/ssh"
 )
 
-const (
+var (
 	GameWidth  = 78
 	GameHeight = 22
 
@@ -42,7 +44,7 @@ type GameManager struct {
 	HandleChannel chan ssh.Channel
 }
 
-// NewGameManager returns a GameManager for when setting up a new server
+// NewGameManager returns a Manager for when setting up a new server
 func NewGameManager() *GameManager {
 	return &GameManager{
 		Games:         map[string]*Game{},
@@ -95,11 +97,10 @@ func (gm *GameManager) HandleNewChannel(sc ssh.Channel, color string) {
 				session.HandleDown()
 			case KeyD, KeyL, KeyE:
 				session.HandleRight()
-			case KeyCtrlC, KeyEscape:
+			case rune(KeyCtrlC), rune(KeyEscape):
 				if g.SessionsCount() == 1 {
 					delete(gm.Games, g.Name)
 				}
-
 				g.RemoveSession(session)
 			}
 		}
@@ -135,4 +136,62 @@ func (gm *GameManager) getAvailableGame() *Game {
 	}
 
 	return g
+}
+
+// SetGameManagerProperties reads cfg.Game.Manager.* and overrides the default
+// game manager properties with values in the configuration json if set
+// TODO: There must be a better way to do this?
+func SetGameManagerProperties(cfg *config.Config) {
+	if cfg.Game.Manager.GameWidth != nil {
+		GameWidth = *cfg.Game.Manager.GameWidth
+	}
+	if cfg.Game.Manager.GameHeight != nil {
+		GameHeight = *cfg.Game.Manager.GameHeight
+	}
+	if cfg.Game.Manager.KeyW != nil {
+		KeyW, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyW)
+	}
+	if cfg.Game.Manager.KeyA != nil {
+		KeyA, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyA)
+	}
+	if cfg.Game.Manager.KeyS != nil {
+		KeyS, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyS)
+	}
+	if cfg.Game.Manager.KeyD != nil {
+		KeyD, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyD)
+	}
+	if cfg.Game.Manager.KeyZ != nil {
+		KeyZ, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyZ)
+	}
+	if cfg.Game.Manager.KeyQ != nil {
+		KeyQ, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyQ)
+	}
+	if cfg.Game.Manager.KeyJ != nil {
+		KeyJ, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyJ)
+	}
+	if cfg.Game.Manager.KeyK != nil {
+		KeyK, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyK)
+	}
+	if cfg.Game.Manager.KeyL != nil {
+		KeyL, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyL)
+	}
+	if cfg.Game.Manager.KeyComma != nil {
+		KeyComma, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyComma)
+	}
+	if cfg.Game.Manager.KeyO != nil {
+		KeyO, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyO)
+	}
+	if cfg.Game.Manager.KeyE != nil {
+		KeyE, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyE)
+	}
+	if cfg.Game.Manager.KeyE != nil {
+		KeyE, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyE)
+	}
+	if cfg.Game.Manager.KeyCtrlC != nil {
+		KeyCtrlC = *cfg.Game.Manager.KeyCtrlC
+	}
+	if cfg.Game.Manager.KeyEscape != nil {
+		KeyEscape = *cfg.Game.Manager.KeyEscape
+	}
+	return
 }
