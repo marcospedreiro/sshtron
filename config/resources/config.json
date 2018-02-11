@@ -23,8 +23,8 @@
       "KeyComma": ",",
       "KeyO": "o",
       "KeyE": "e",
-      "KeyCtrlC":3,
-      "KeyEscape":27
+      "KeyCtrlC": 3,
+      "KeyEscape": 27
     },
     "Player": {
       "VerticalSpeed": 0.007,
