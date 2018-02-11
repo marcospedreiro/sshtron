@@ -12,32 +12,6 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-var (
-	GameWidth  = 78
-	GameHeight = 22
-
-	KeyW = 'w'
-	KeyA = 'a'
-	KeyS = 's'
-	KeyD = 'd'
-
-	KeyZ = 'z'
-	KeyQ = 'q'
-	// KeyS and KeyD are already defined
-
-	KeyH = 'h'
-	KeyJ = 'j'
-	KeyK = 'k'
-	KeyL = 'l'
-
-	KeyComma = ','
-	KeyO     = 'o'
-	KeyE     = 'e'
-
-	KeyCtrlC  = 3
-	KeyEscape = 27
-)
-
 // GameManager maintains the list of running games
 type GameManager struct {
 	Games         map[string]*Game
@@ -58,7 +32,7 @@ Then handles a connected players actions up through the player leaving the game
 func (gm *GameManager) HandleNewChannel(sc ssh.Channel, color string) {
 	g := gm.getAvailableGame()
 	if g == nil {
-		g = NewGame(GameWidth, GameHeight)
+		g = NewGame(config.GameWidth, config.GameHeight)
 		gm.Games[g.Name] = g
 
 		go g.Run()
@@ -89,15 +63,15 @@ func (gm *GameManager) HandleNewChannel(sc ssh.Channel, color string) {
 			}
 
 			switch r {
-			case KeyW, KeyZ, KeyK, KeyComma:
+			case config.KeyW, config.KeyZ, config.KeyK, config.KeyComma:
 				session.HandleUp()
-			case KeyA, KeyQ, KeyH:
+			case config.KeyA, config.KeyQ, config.KeyH:
 				session.HandleLeft()
-			case KeyS, KeyJ, KeyO:
+			case config.KeyS, config.KeyJ, config.KeyO:
 				session.HandleDown()
-			case KeyD, KeyL, KeyE:
+			case config.KeyD, config.KeyL, config.KeyE:
 				session.HandleRight()
-			case rune(KeyCtrlC), rune(KeyEscape):
+			case rune(config.KeyCtrlC), rune(config.KeyEscape):
 				if g.SessionsCount() == 1 {
 					delete(gm.Games, g.Name)
 				}
@@ -143,55 +117,55 @@ func (gm *GameManager) getAvailableGame() *Game {
 // TODO: There must be a better way to do this?
 func SetGameManagerProperties(cfg *config.Config) {
 	if cfg.Game.Manager.GameWidth != nil {
-		GameWidth = *cfg.Game.Manager.GameWidth
+		config.GameWidth = *cfg.Game.Manager.GameWidth
 	}
 	if cfg.Game.Manager.GameHeight != nil {
-		GameHeight = *cfg.Game.Manager.GameHeight
+		config.GameHeight = *cfg.Game.Manager.GameHeight
 	}
 	if cfg.Game.Manager.KeyW != nil {
-		KeyW, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyW)
+		config.KeyW, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyW)
 	}
 	if cfg.Game.Manager.KeyA != nil {
-		KeyA, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyA)
+		config.KeyA, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyA)
 	}
 	if cfg.Game.Manager.KeyS != nil {
-		KeyS, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyS)
+		config.KeyS, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyS)
 	}
 	if cfg.Game.Manager.KeyD != nil {
-		KeyD, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyD)
+		config.KeyD, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyD)
 	}
 	if cfg.Game.Manager.KeyZ != nil {
-		KeyZ, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyZ)
+		config.KeyZ, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyZ)
 	}
 	if cfg.Game.Manager.KeyQ != nil {
-		KeyQ, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyQ)
+		config.KeyQ, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyQ)
 	}
 	if cfg.Game.Manager.KeyJ != nil {
-		KeyJ, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyJ)
+		config.KeyJ, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyJ)
 	}
 	if cfg.Game.Manager.KeyK != nil {
-		KeyK, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyK)
+		config.KeyK, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyK)
 	}
 	if cfg.Game.Manager.KeyL != nil {
-		KeyL, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyL)
+		config.KeyL, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyL)
 	}
 	if cfg.Game.Manager.KeyComma != nil {
-		KeyComma, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyComma)
+		config.KeyComma, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyComma)
 	}
 	if cfg.Game.Manager.KeyO != nil {
-		KeyO, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyO)
+		config.KeyO, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyO)
 	}
 	if cfg.Game.Manager.KeyE != nil {
-		KeyE, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyE)
+		config.KeyE, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyE)
 	}
 	if cfg.Game.Manager.KeyE != nil {
-		KeyE, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyE)
+		config.KeyE, _ = utf8.DecodeRuneInString(*cfg.Game.Manager.KeyE)
 	}
 	if cfg.Game.Manager.KeyCtrlC != nil {
-		KeyCtrlC = *cfg.Game.Manager.KeyCtrlC
+		config.KeyCtrlC = *cfg.Game.Manager.KeyCtrlC
 	}
 	if cfg.Game.Manager.KeyEscape != nil {
-		KeyEscape = *cfg.Game.Manager.KeyEscape
+		config.KeyEscape = *cfg.Game.Manager.KeyEscape
 	}
 	return
 }
