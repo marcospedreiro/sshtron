@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/fatih/color"
+	"github.com/marcospedreiro/sshtron/config"
 	"github.com/marcospedreiro/sshtron/player"
 	"golang.org/x/crypto/ssh"
 )
@@ -56,7 +57,7 @@ func (s *Session) HandleUp() {
 		return
 	}
 	s.Player.Direction = player.PlayerUp
-	s.Player.Marker = player.PlayerUpRune
+	s.Player.Marker = config.PlayerUpRune
 	s.didAction()
 }
 
@@ -66,7 +67,7 @@ func (s *Session) HandleDown() {
 		return
 	}
 	s.Player.Direction = player.PlayerDown
-	s.Player.Marker = player.PlayerDownRune
+	s.Player.Marker = config.PlayerDownRune
 	s.didAction()
 }
 
@@ -76,7 +77,7 @@ func (s *Session) HandleLeft() {
 		return
 	}
 	s.Player.Direction = player.PlayerLeft
-	s.Player.Marker = player.PlayerLeftRune
+	s.Player.Marker = config.PlayerLeftRune
 	s.didAction()
 }
 
@@ -86,6 +87,6 @@ func (s *Session) HandleRight() {
 		return
 	}
 	s.Player.Direction = player.PlayerRight
-	s.Player.Marker = player.PlayerRightRune
+	s.Player.Marker = config.PlayerRightRune
 	s.didAction()
 }

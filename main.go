@@ -23,8 +23,6 @@ func main() {
 		panic("Unable to load configuration")
 	}
 
-	//fmt.Printf("%+v\n", cfg)
-
 	server.Start(cfg)
 
 	return

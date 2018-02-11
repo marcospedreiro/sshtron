@@ -7,38 +7,27 @@ import (
 
 // ServerConf is the config struct for the main server properties
 type ServerConf struct {
-	SSHPort    string
-	SSHKeyPath string
-	SSHKeyName string
+	SSHPort    *string
+	SSHKeyPath *string
+	SSHKeyName *string
 
-	HTTPPort          string
-	HTTPFileServerDir string
-}
-
-// GameServerConf is the config struct for the game server properties
-type GameServerConf struct {
-	GameWidth  int
-	GameHeight int
-}
-
-// PlayerConf is the config struct for player properties
-type PlayerConf struct {
-	VerticalSpeed   float64
-	HorizontalSpeed float64
+	HTTPPort          *string
+	HTTPFileServerDir *string
 }
 
 // GameConf is the config struct for the game properties
 type GameConf struct {
-	Server GameServerConf
-	Player PlayerConf
+	Manager *GameManagerConf
+	Server  *GameServerConf
+	Player  *PlayerConf
 }
 
 // Config represents a configuration object for the sshtron game
 type Config struct {
 	Testkey string
 
-	Server ServerConf
-	Game   GameConf
+	Server *ServerConf
+	Game   *GameConf
 }
 
 /*

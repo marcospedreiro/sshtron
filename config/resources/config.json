@@ -1,20 +1,58 @@
 {
-  "Testkey":"test_value",
   "Server": {
     "SSHPort": "22222",
-    "SSHKeyPath":"./config/resources/",
-    "SSHKeyName":"sshtron.pem",
+    "SSHKeyPath": "./config/resources/",
+    "SSHKeyName": "sshtron.pem",
     "HTTPPort": "8080",
     "HTTPFileServerDir": "./static/"
   },
   "Game": {
-    "Server": {
+    "Manager": {
       "GameWidth": 78,
-      "GameHeight": 22
+      "GameHeight": 22,
+      "KeyW": "w",
+      "KeyA": "a",
+      "KeyS": "s",
+      "KeyD": "d",
+      "KeyZ": "z",
+      "KeyQ": "q",
+      "KeyH": "h",
+      "KeyJ": "j",
+      "KeyK": "k",
+      "KeyL": "l",
+      "KeyComma": ",",
+      "KeyO": "o",
+      "KeyE": "e",
+      "KeyCtrlC": 3,
+      "KeyEscape": 27
     },
     "Player": {
       "VerticalSpeed": 0.007,
-      "HorizontalSpeed": 0.01
+      "HorizontalSpeed": 0.01,
+      "CountScoreMultiplier": 1.25,
+      "TimeoutSeconds": 15,
+      "UpRune": "⇡",
+      "DownRune": "⇣",
+      "LeftRune": "⇠",
+      "RightRune": "⇢",
+      "TrailHorizontal": "┄",
+      "TrailVertical": "┆",
+      "TrailLeftCornerUp": "╭",
+      "TrailLeftCornerDown": "╰",
+      "TrailRightCornerDown": "╯",
+      "TrailRightCornerUp": "╮"
+    },
+    "Server": {
+      "VerticalWall": "║",
+      "HorizontalWall": "═",
+      "TopLeft": "╔",
+      "TopRight": "╗",
+      "BottomRight": "╝",
+      "BottomLeft": "╚",
+      "Grass": " ",
+      "Blocker": "■",
+      "GameLoopsPerSecond": 100,
+      "RedrawsPerSecond": 50
     }
   }
 }
