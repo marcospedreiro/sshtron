@@ -71,7 +71,9 @@ type Player struct {
 	Trail    []PlayerTrailSegment
 	TrailLen int
 
-	score float64
+	BaseSpeed     float64
+	SpeedModifier float64
+	score         float64
 }
 
 // NewPlayer creates a new player. If color is below 1, a random color is chosen
@@ -86,43 +88,45 @@ func NewPlayer(worldWidth int, worldHeight int, color color.Attribute) *Player {
 		color = PlayerColors[rand.Intn(len(PlayerColors))]
 	}
 
-	spawnDirection, spawnMarker := GetSpawnDirection(worldWidth, worldHeight, startX, startY)
+	spawnDirection, spawnMarker, spawnSpeed := GetSpawnDirection(worldWidth, worldHeight, startX, startY)
 	return &Player{
-		CreatedAt: time.Now(),
-		Marker:    spawnMarker,
-		Direction: spawnDirection,
-		Color:     color,
-		Pos:       &position.Position{X: startX, Y: startY},
-		TrailLen:  0,
+		CreatedAt:     time.Now(),
+		Marker:        spawnMarker,
+		Direction:     spawnDirection,
+		Color:         color,
+		Pos:           &position.Position{X: startX, Y: startY},
+		TrailLen:      0,
+		BaseSpeed:     spawnSpeed,
+		SpeedModifier: 0,
 	}
 }
 
 // GetSpawnDirection determines which quadrant a players start position is in and returns a direction
 // that is suitable for the position
-func GetSpawnDirection(worldWidth int, worldHeight int, StartX float64, StartY float64) (PlayerDirection, rune) {
+func GetSpawnDirection(worldWidth int, worldHeight int, StartX float64, StartY float64) (PlayerDirection, rune, float64) {
 	switch {
 	case StartX < float64(worldWidth/2) && StartY < float64(worldHeight/2):
 		if rand.Float64() > 0.5 {
-			return PlayerDown, config.PlayerDownRune
+			return PlayerDown, config.PlayerDownRune, config.VerticalPlayerSpeed
 		}
-		return PlayerRight, config.PlayerRightRune
+		return PlayerRight, config.PlayerRightRune, config.HorizontalPlayerSpeed
 	case StartX > float64(worldWidth/2) && StartY < float64(worldHeight/2):
 		if rand.Float64() > 0.5 {
-			return PlayerDown, config.PlayerDownRune
+			return PlayerDown, config.PlayerDownRune, config.VerticalPlayerSpeed
 		}
-		return PlayerLeft, config.PlayerLeftRune
+		return PlayerLeft, config.PlayerLeftRune, config.HorizontalPlayerSpeed
 	case StartX < float64(worldWidth/2) && StartY > float64(worldHeight/2):
 		if rand.Float64() > 0.5 {
-			return PlayerUp, config.PlayerUpRune
+			return PlayerUp, config.PlayerUpRune, config.VerticalPlayerSpeed
 		}
-		return PlayerRight, config.PlayerRightRune
+		return PlayerRight, config.PlayerRightRune, config.HorizontalPlayerSpeed
 	case StartX > float64(worldWidth/2) && StartY > float64(worldHeight/2):
 		if rand.Float64() > 0.5 {
-			return PlayerUp, config.PlayerUpRune
+			return PlayerUp, config.PlayerUpRune, config.VerticalPlayerSpeed
 		}
-		return PlayerLeft, config.PlayerLeftRune
+		return PlayerLeft, config.PlayerLeftRune, config.HorizontalPlayerSpeed
 	default:
-		return PlayerDown, config.PlayerDownRune
+		return PlayerDown, config.PlayerDownRune, config.VerticalPlayerSpeed
 	}
 }
 
@@ -136,17 +140,18 @@ func (p *Player) addTrailSegment(pos position.Position, marker rune) {
 func (p *Player) trimTrailSegments(delta float64) {
 	trailSegmentsToKeep := config.PlayerTrailMaxLength
 	if config.LimitPlayerTrailByTime {
-		currentSpeed := config.HorizontalPlayerSpeed
-		if p.Direction == PlayerUp || p.Direction == PlayerDown {
-			currentSpeed = config.VerticalPlayerSpeed
-		}
-		trailSegmentsToKeep = int(currentSpeed*delta*float64(config.GameLoopsPerSecond)) * config.PlayerTrailMaxTime
+		trailSegmentsToKeep = int(p.CurrentSpeed()*delta*float64(config.GameLoopsPerSecond)) * config.PlayerTrailMaxTime
 	}
 	if p.TrailLen > trailSegmentsToKeep {
 		p.Trail = p.Trail[:trailSegmentsToKeep]
 		p.TrailLen = trailSegmentsToKeep
 	}
 	return
+}
+
+// CurrentSpeed for the player: BaseSpeed + SpeedModifier
+func (p *Player) CurrentSpeed() float64 {
+	return p.BaseSpeed + p.SpeedModifier
 }
 
 func (p *Player) calculateScore(delta float64, playerCount int) float64 {
@@ -178,13 +183,13 @@ func (p *Player) Update(numPlayers int, delta float64) {
 
 	switch p.Direction {
 	case PlayerUp:
-		p.Pos.Y -= config.VerticalPlayerSpeed * delta
+		p.Pos.Y -= p.CurrentSpeed() * delta
 	case PlayerLeft:
-		p.Pos.X -= config.HorizontalPlayerSpeed * delta
+		p.Pos.X -= p.CurrentSpeed() * delta
 	case PlayerDown:
-		p.Pos.Y += config.VerticalPlayerSpeed * delta
+		p.Pos.Y += p.CurrentSpeed() * delta
 	case PlayerRight:
-		p.Pos.X += config.HorizontalPlayerSpeed * delta
+		p.Pos.X += p.CurrentSpeed() * delta
 	}
 
 	endX, endY := p.Pos.RoundX(), p.Pos.RoundY()
@@ -264,6 +269,18 @@ func SetPlayerProperties(cfg *config.Config) {
 	if cfg.Game.Player.HorizontalSpeed != nil {
 		config.HorizontalPlayerSpeed = *cfg.Game.Player.HorizontalSpeed
 	}
+	if cfg.Game.Player.MaxSpeedIncrease != nil {
+		config.MaxSpeedIncrease = *cfg.Game.Player.MaxSpeedIncrease
+	}
+	if cfg.Game.Player.MaxSpeedDecrease != nil {
+		config.MaxSpeedDecrease = *cfg.Game.Player.MaxSpeedDecrease
+	}
+	if cfg.Game.Player.AccelerationFactor != nil {
+		config.AccelerationFactor = *cfg.Game.Player.AccelerationFactor
+	}
+	if cfg.Game.Player.DecelerationFactor != nil {
+		config.DecelerationFactor = *cfg.Game.Player.DecelerationFactor
+	}
 	if cfg.Game.Player.CountScoreMultiplier != nil {
 		config.PlayerCountScoreMultiplier = *cfg.Game.Player.CountScoreMultiplier
 	}
@@ -300,7 +317,6 @@ func SetPlayerProperties(cfg *config.Config) {
 	if cfg.Game.Player.TrailRightCornerUp != nil {
 		config.PlayerTrailRightCornerUp, _ = utf8.DecodeRuneInString(*cfg.Game.Player.TrailRightCornerUp)
 	}
-
 	if cfg.Game.Player.PlayerTrailLengthLimit != nil {
 		config.PlayerTrailLengthLimit = *cfg.Game.Player.PlayerTrailLengthLimit
 	}

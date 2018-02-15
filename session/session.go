@@ -58,6 +58,7 @@ func (s *Session) HandleUp() {
 	}
 	s.Player.Direction = player.PlayerUp
 	s.Player.Marker = config.PlayerUpRune
+	s.Player.BaseSpeed = config.VerticalPlayerSpeed
 	s.didAction()
 }
 
@@ -68,6 +69,7 @@ func (s *Session) HandleDown() {
 	}
 	s.Player.Direction = player.PlayerDown
 	s.Player.Marker = config.PlayerDownRune
+	s.Player.BaseSpeed = config.VerticalPlayerSpeed
 	s.didAction()
 }
 
@@ -78,6 +80,7 @@ func (s *Session) HandleLeft() {
 	}
 	s.Player.Direction = player.PlayerLeft
 	s.Player.Marker = config.PlayerLeftRune
+	s.Player.BaseSpeed = config.HorizontalPlayerSpeed
 	s.didAction()
 }
 
@@ -88,5 +91,24 @@ func (s *Session) HandleRight() {
 	}
 	s.Player.Direction = player.PlayerRight
 	s.Player.Marker = config.PlayerRightRune
+	s.Player.BaseSpeed = config.HorizontalPlayerSpeed
+	s.didAction()
+}
+
+// HandleSpeedUp responds to the player pressing the SpeedUp key
+func (s *Session) HandleSpeedUp() {
+	if s.Player.SpeedModifier >= config.MaxSpeedIncrease {
+		return
+	}
+	s.Player.SpeedModifier += config.AccelerationFactor
+	s.didAction()
+}
+
+// HandleSlowDown responds to the player pressing the SlowDown key
+func (s *Session) HandleSlowDown() {
+	if s.Player.SpeedModifier <= config.MaxSpeedDecrease {
+		return
+	}
+	s.Player.SpeedModifier -= config.DecelerationFactor
 	s.didAction()
 }

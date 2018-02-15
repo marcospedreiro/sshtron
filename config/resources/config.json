@@ -8,8 +8,8 @@
   },
   "Game": {
     "Manager": {
-      "GameWidth": 78,
-      "GameHeight": 22,
+      "GameWidth": 80,
+      "GameHeight": 32,
       "KeyW": "w",
       "KeyA": "a",
       "KeyS": "s",
@@ -24,11 +24,17 @@
       "KeyO": "o",
       "KeyE": "e",
       "KeyCtrlC": 3,
-      "KeyEscape": 27
+      "KeyEscape": 27,
+      "KeyAccelerate": 93,
+      "KeyDecelerate": 91
     },
     "Player": {
-      "VerticalSpeed": 0.007,
+      "VerticalSpeed": 0.01,
       "HorizontalSpeed": 0.01,
+      "MaxSpeedIncrease": 0.05,
+      "MaxSpeedDecrease": -0.005,
+      "AccelerationFactor": 0.003,
+      "DecelerationFactor": 0.002,
       "CountScoreMultiplier": 1.25,
       "TimeoutSeconds": 15,
       "UpRune": "⇡",

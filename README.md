@@ -14,7 +14,11 @@ SSHTron is a multiplayer lightcycle game that runs through SSH. Just run the com
 $ ssh sshtron.zachlatta.com
 ```
 
-Controls: WASD or vim keybindings to move (do not use your arrow keys). Escape or Ctrl+C to exit.
+## Controls
+
+- WASD or vim keybindings to move (do not use your arrow keys).
+- `]` to accelerate, `[` to decelerate
+- Escape or Ctrl+C to exit.
 
 ## Want to choose color yourself?
 There are total 7 colors to choose from: Red, Green, Yellow, Blue, Magenta, Cyan and White
