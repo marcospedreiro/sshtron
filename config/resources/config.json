@@ -1,6 +1,6 @@
 {
   "Server": {
-    "SSHPort": "20022",
+    "SSHPort": "22222",
     "SSHKeyPath": "./config/resources/",
     "SSHKeyName": "sshtron.pem",
     "HTTPPort": "8080",
