@@ -1,6 +1,6 @@
 {
   "Server": {
-    "SSHPort": "22222",
+    "SSHPort": "20022",
     "SSHKeyPath": "./config/resources/",
     "SSHKeyName": "sshtron.pem",
     "HTTPPort": "8080",
@@ -51,8 +51,8 @@
       "BottomLeft": "╚",
       "Grass": " ",
       "Blocker": "■",
-      "GameLoopsPerSecond": 100,
-      "RedrawsPerSecond": 50
+      "GameLoopsPerSecond": 60,
+      "RedrawsPerSecond": 60
     }
   }
 }

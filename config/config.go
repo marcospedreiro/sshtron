@@ -5,16 +5,6 @@ import (
 	"os"
 )
 
-// ServerConf is the config struct for the main server properties
-type ServerConf struct {
-	SSHPort    *string
-	SSHKeyPath *string
-	SSHKeyName *string
-
-	HTTPPort          *string
-	HTTPFileServerDir *string
-}
-
 // GameConf is the config struct for the game properties
 type GameConf struct {
 	Manager *GameManagerConf
