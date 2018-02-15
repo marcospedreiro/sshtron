@@ -71,6 +71,10 @@ func (gm *GameManager) HandleNewChannel(sc ssh.Channel, color string) {
 				session.HandleDown()
 			case config.KeyD, config.KeyL, config.KeyE:
 				session.HandleRight()
+			case rune(config.KeyAccelerate):
+				session.HandleSpeedUp()
+			case rune(config.KeyDecelerate):
+				session.HandleSlowDown()
 			case rune(config.KeyCtrlC), rune(config.KeyEscape):
 				if g.SessionsCount() == 1 {
 					delete(gm.Games, g.Name)
