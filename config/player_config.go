@@ -18,6 +18,11 @@ type PlayerConf struct {
 	TrailLeftCornerDown  *string
 	TrailRightCornerDown *string
 	TrailRightCornerUp   *string
+
+	PlayerTrailLengthLimit *bool
+	LimitPlayerTrailByTime *bool
+	PlayerTrailMaxLength   *int
+	PlayerTrailMaxTime     *int
 }
 
 // default values if not provided in config file
@@ -38,4 +43,9 @@ var (
 	PlayerTrailLeftCornerDown  = '╰'
 	PlayerTrailRightCornerDown = '╯'
 	PlayerTrailRightCornerUp   = '╮'
+
+	PlayerTrailLengthLimit = true
+	LimitPlayerTrailByTime = false
+	PlayerTrailMaxLength   = 20
+	PlayerTrailMaxTime     = 3
 )

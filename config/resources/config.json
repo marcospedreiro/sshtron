@@ -40,7 +40,11 @@
       "TrailLeftCornerUp": "╭",
       "TrailLeftCornerDown": "╰",
       "TrailRightCornerDown": "╯",
-      "TrailRightCornerUp": "╮"
+      "TrailRightCornerUp": "╮",
+      "PlayerTrailLengthLimit": true,
+      "LimitPlayerTrailByTime": false,
+      "PlayerTrailMaxLength": 15,
+      "PlayerTrailMaxTime": 2
     },
     "Server": {
       "VerticalWall": "║",
